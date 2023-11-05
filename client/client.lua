@@ -13,8 +13,67 @@ function FakeData()
   return fakeData
 end
 
+local Player
+function InitPlayer(src)
+  local xPlayer = QBCore.Functions.GetPlayer(src)
+  local player = {
+    cid = xPlayer.cid,
+    name = xPlayer.PlayerData.charinfo.firstname .. "  " .. xPlayer.PlayerData.charinfo.lastname,
+    src = src
+  }
+  Player = player
+  return player
+end
+
+local Party
+function ClientUpdateParty(party)
+  Party = party
+  -- send party to NUI
+end
+
+RegisterNetEvent('v-rep:client:updateParty', function(party)
+  ClientUpdateParty(party)
+end)
+
+
+function ClientCheckParty(player)
+  local partyresult
+  QBCore.Functions.TriggerCallback('v-rep:checkParty', function(result)
+    partyresult = result
+  end, player)
+  return partyresult
+end
+
+function ClientLeaveParty(player, code)
+  TriggerServerEvent('v-rep:server:leaveParty', player, code)
+end
+
+function ClientLeaveParty(player, code)
+  TriggerServerEvent('v-rep:server:leaveParty', player, code)
+end
+
+function ClientJoinPartyRequest(code)
+  local joinresult
+  QBCore.Functions.TriggerCallback('v-rep:joinParty', function(result)
+    joinresult = result
+  end, Player, code)
+  
+  if joinresult == "full" or joinresult == "member" or joinresult == "none" then
+    print("Failed to join party: " .. joinresult)
+    return
+  end
+  print("Joined Party")
+end
+
+function PartyMain(src)
+  InitPlayer(src)
+  ClientUpdateParty(ClientCheckParty(Player))
+end
+
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-  print("Init Rep Data")
+  local src = source
+  PartyMain(src)
+  print("Init NUI Rep Data")
   SendReactMessage('initRepData', FakeData())
 end)
 
@@ -22,6 +81,27 @@ local function toggleNuiFrame(shouldShow)
   SetNuiFocus(shouldShow, shouldShow)
   SendReactMessage('setVisible', shouldShow)
 end
+
+RegisterCommand('v-party', function(source, args)
+  if args[1] == "list" then
+    for i, member in ipairs(Party.members) do
+      if member.cid == Party.leader then
+        TriggerEvent('chat:addMessage', {
+          color = { 255, 0, 0},
+          multiline = true,
+          args = {"PARTY", "NAME: \"" .. member.name .. "\", LEADER: \"true\""}
+        })
+      else
+        TriggerEvent('chat:addMessage', {
+          color = { 255, 0, 0},
+          multiline = true,
+          args = {"PARTY", "NAME: \"" .. member.name .. "\", LEADER: \"false\""}
+        })
+      end
+    end
+  end
+
+end, false)
 
 RegisterCommand('v-rep', function(source, args)
   if args[1] == "show" then
