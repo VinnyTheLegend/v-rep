@@ -87,7 +87,7 @@ export const PartyComponent: React.FC = () => {
   return (
     <div className="top-info">
       <div className="code-container">
-        <form action="" id="join-party-form">
+        <form action="" id="join-party-form" onSubmit={(e) => {e.preventDefault(); joinRequest()}}>
           <input
             type="text"
             id="code-input"
