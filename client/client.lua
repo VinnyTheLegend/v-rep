@@ -81,8 +81,7 @@ end
 
 function PartyMain()
   InitPlayer()
-  local party = ClientCheckParty(Player)
-  ClientUpdateParty(party)
+  ClientCheckParty(Player)
 end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()

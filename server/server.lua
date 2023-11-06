@@ -50,6 +50,7 @@ function InitParty(player)
     print("leader: " .. party.leader)
     print("cid: " .. party.members[1].cid)
     table.insert(Parties, party)
+    TriggerClientEvent('v-rep:client:updateParty', player.cid, party)
     print("party list: ")
     for i, party in ipairs(Parties) do 
         print("party: " .. party.code)
@@ -105,6 +106,7 @@ AddEventHandler('v-rep:server:leaveParty', function(player, code)
             break
         end
     end
+    InitParty(player)
 end)
 
 QBCore.Functions.CreateCallback('v-rep:joinParty', function(_, cb, player, code)
