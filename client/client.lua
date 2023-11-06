@@ -101,7 +101,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
   SendReactMessage('initRepData', FakeData())
 end)
 
--- PartyMain()
+--PartyMain()
 
 
 RegisterCommand('v-party', function(source, args)
@@ -142,7 +142,7 @@ RegisterCommand('v-party', function(source, args)
   end
 
   if args[1] == "kick" then
-    ClientKickParty(args[2], Party.code)
+    ClientKickParty(tonumber(args[2]), Party.code)
   end
 
   if args[1] == "newcode" then

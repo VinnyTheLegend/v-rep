@@ -154,6 +154,7 @@ end)
 
 RegisterNetEvent('v-rep:server:kickParty')
 AddEventHandler('v-rep:server:kickParty', function(targetcid, code)
+    print("server party (" .. code .. ") KICK: " .. targetcid)
     for i, party in ipairs(Parties) do
         if party.code == code then
             for i, member in ipairs(party.members) do
