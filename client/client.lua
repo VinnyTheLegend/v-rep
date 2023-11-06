@@ -14,19 +14,24 @@ function FakeData()
 end
 
 local Player
-function InitPlayer(src)
-  local xPlayer = QBCore.Functions.GetPlayer(src)
+function InitPlayer()
+  local PlayerData = QBCore.Functions.GetPlayerData()
   local player = {
-    cid = xPlayer.cid,
-    name = xPlayer.PlayerData.charinfo.firstname .. "  " .. xPlayer.PlayerData.charinfo.lastname,
-    src = src
+    cid = PlayerData.source,
+    name = PlayerData.charinfo.firstname .. " " .. PlayerData.charinfo.lastname,
+    citizenid = PlayerData.citizenid
   }
+  print("client init data cid: " .. player.cid)
   Player = player
   return player
 end
 
 local Party
 function ClientUpdateParty(party)
+  print("updating party: " .. party.code)
+  for i, member in ipairs(party.members) do
+    print(" member: " .. member.name)
+  end
   Party = party
   -- send party to NUI
 end
@@ -37,10 +42,14 @@ end)
 
 
 function ClientCheckParty(player)
-  local partyresult
+  print("sending player data: cid:" .. player.cid)
+  local p = promise.new()
   QBCore.Functions.TriggerCallback('v-rep:checkParty', function(result)
-    partyresult = result
+    p:resolve(result)
   end, player)
+
+  local partyresult = Citizen.Await(p)
+  print("party recieved from server: " .. partyresult.code)
   return partyresult
 end
 
@@ -48,29 +57,36 @@ function ClientLeaveParty(player, code)
   TriggerServerEvent('v-rep:server:leaveParty', player, code)
 end
 
-function ClientLeaveParty(player, code)
-  TriggerServerEvent('v-rep:server:leaveParty', player, code)
+function ClientNewCode(code)
+  TriggerServerEvent('v-rep:server:newCode', code)
 end
 
 function ClientJoinPartyRequest(code)
-  local joinresult
+  if code == Party.code then
+    print("Failed to join party: already a member")
+    return
+  end
+  local p = promise.new()
   QBCore.Functions.TriggerCallback('v-rep:joinParty', function(result)
-    joinresult = result
+    p:resolve(result)
   end, Player, code)
-  
-  if joinresult == "full" or joinresult == "member" or joinresult == "none" then
+
+  local joinresult = Citizen.Await(p)
+  if joinresult == "full" or joinresult == "member" or joinresult == "noparty" then
     print("Failed to join party: " .. joinresult)
     return
   end
   print("Joined Party")
 end
 
-function PartyMain(src)
-  InitPlayer(src)
-  ClientUpdateParty(ClientCheckParty(Player))
+function PartyMain()
+  InitPlayer()
+  local party = ClientCheckParty(Player)
+  ClientUpdateParty(party)
 end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+  Wait(5000)
   local src = source
   PartyMain(src)
   print("Init NUI Rep Data")
@@ -82,23 +98,44 @@ local function toggleNuiFrame(shouldShow)
   SendReactMessage('setVisible', shouldShow)
 end
 
+PartyMain()
+
 RegisterCommand('v-party', function(source, args)
+  local src = source
   if args[1] == "list" then
+    TriggerEvent('chat:addMessage', {
+      color = { 255, 0, 0},
+      multiline = true,
+      args = {"PARTY", "CODE: \"" .. Party.code .. "\""}
+    })
     for i, member in ipairs(Party.members) do
-      if member.cid == Party.leader then
+      if member.citizenid == Party.leader then
         TriggerEvent('chat:addMessage', {
           color = { 255, 0, 0},
           multiline = true,
-          args = {"PARTY", "NAME: \"" .. member.name .. "\", LEADER: \"true\""}
+          args = {"PARTY", "MEMBER: \"" .. member.name .. "\", LEADER: \"true\""}
         })
       else
         TriggerEvent('chat:addMessage', {
           color = { 255, 0, 0},
           multiline = true,
-          args = {"PARTY", "NAME: \"" .. member.name .. "\", LEADER: \"false\""}
+          args = {"PARTY", "MEMBER: \"" .. member.name .. "\", LEADER: \"false\""}
         })
       end
     end
+  end
+
+  if args[1] == "newcode" then
+    local old_code = Party.code
+    ClientNewCode(Party.code)
+  end
+
+  if args[1] == "reload" then
+    PartyMain()
+  end
+
+  if args[1] == "join" then
+    ClientJoinPartyRequest(args[2])
   end
 
 end, false)

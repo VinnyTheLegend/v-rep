@@ -40,12 +40,20 @@ function NewPartyCode()
 end
 
 function InitParty(player)
+    print("init party for cid: " .. player.cid)
     local party = {
         code = NewPartyCode(),
-        leader = player.cid,
-        members = {}
+        leader = player.citizenid,
+        members = { player }
     }
+    print("adding party to table: " .. party.code)
+    print("leader: " .. party.leader)
+    print("cid: " .. party.members[1].cid)
     table.insert(Parties, party)
+    print("party list: ")
+    for i, party in ipairs(Parties) do 
+        print("party: " .. party.code)
+    end
     return party
 end
 
@@ -55,9 +63,11 @@ function ServerCheckParty(player)
     end 
     for i, party in ipairs(Parties) do 
         for i, member in ipairs(party.members) do
-            if member.cid == player.cid then
-                member.src = player.src
-                TriggerClientEvent('v-rep:client:updateParty', player.src, party)
+            if member.citizenid == player.citizenid then
+                member.cid = player.cid
+                for i, member in ipairs(party.members) do
+                    TriggerClientEvent('v-rep:client:updateParty', member.cid, party)
+                end
                 return party
             end
         end
@@ -67,7 +77,13 @@ end
 
 QBCore.Functions.CreateCallback('v-rep:checkParty', function(source, cb, player)
     local src = source
-    cb(ServerCheckParty(player))
+    print("received player info: cid: " .. player.cid)
+    local party = ServerCheckParty(player)
+    print("sending server party callback: " .. party.code)
+    for i, member in ipairs(party.members) do
+        print(" member: " .. member.name)
+    end
+    cb(party)
 end)
 
 RegisterNetEvent('v-rep:server:leaveParty')
@@ -84,36 +100,39 @@ AddEventHandler('v-rep:server:leaveParty', function(player, code)
                 end
             end
             for i, member in ipairs(party.members) do
-                TriggerClientEvent('v-rep:client:updateParty', member.src, party)
+                TriggerClientEvent('v-rep:client:updateParty', member.cid, party)
             end
             break
         end
     end
 end)
 
-QBCore.Functions.CreateCallback('v-rep:joinParty', function(source, cb, player, code)
-    local src = source
-    local response
+QBCore.Functions.CreateCallback('v-rep:joinParty', function(_, cb, player, code)
+    local matched = false
     for i, party in ipairs(Parties) do
-        if party.code == code then
+        print(party.code .. " entered: " .. tostring(code))
+        if party.code == tostring(code) then
+            matched = true
+            print("code match")
             local count = 0
             for i, member in ipairs(party.members) do
                 count = count + 1
-                if member.cid == player.cid then
-                   return cb("member")
-                end
             end
             if count >= 4 then
-                return cb("full")
+                cb("full")
+                return
             end
+            print("adding member")
             table.insert(party.members, player)
             for i, member in ipairs(party.members) do
-                TriggerClientEvent('v-rep:client:updateParty', member.src, party)
+                TriggerClientEvent('v-rep:client:updateParty', member.cid, party)
             end
             cb(party)
-            break
+            return
         end
-        cb("none")
+    end
+    if matched == false then
+        cb("noparty")
     end
 end)
 
@@ -124,7 +143,7 @@ AddEventHandler('v-rep:server:newCode', function(code)
             local new_code = NewPartyCode()
             party.code = new_code
             for i, member in ipairs(party.members) do
-                TriggerClientEvent('v-rep:client:updateParty', member.src, party)
+                TriggerClientEvent('v-rep:client:updateParty', member.cid, party)
             end
             break
         end
