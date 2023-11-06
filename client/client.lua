@@ -1,5 +1,10 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
+local function toggleNuiFrame(shouldShow)
+  SetNuiFocus(shouldShow, shouldShow)
+  SendReactMessage('setVisible', shouldShow)
+end
+
 function FakeData()
   local fakeData = {}
   for i, item in pairs({"Bank Robbery", "House Robbery", "Hacking", "Chop Shop", "Boosting", "Crafting"}) do
@@ -61,6 +66,10 @@ function ClientNewCode(code)
   TriggerServerEvent('v-rep:server:newCode', code)
 end
 
+function ClientKickParty(targetcid, code)
+  TriggerServerEvent('v-rep:server:kickParty', targetcid, code)
+end
+
 function ClientJoinPartyRequest(code)
   if code == Party.code then
     print("Failed to join party: already a member")
@@ -87,17 +96,13 @@ end
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
   Wait(5000)
   local src = source
-  PartyMain(src)
+  PartyMain()
   print("Init NUI Rep Data")
   SendReactMessage('initRepData', FakeData())
 end)
 
-local function toggleNuiFrame(shouldShow)
-  SetNuiFocus(shouldShow, shouldShow)
-  SendReactMessage('setVisible', shouldShow)
-end
+-- PartyMain()
 
-PartyMain()
 
 RegisterCommand('v-party', function(source, args)
   local src = source
@@ -124,17 +129,25 @@ RegisterCommand('v-party', function(source, args)
     end
   end
 
-  if args[1] == "newcode" then
-    local old_code = Party.code
-    ClientNewCode(Party.code)
-  end
-
   if args[1] == "reload" then
     PartyMain()
   end
 
   if args[1] == "join" then
     ClientJoinPartyRequest(args[2])
+  end
+
+  if args[1] == "leave" then
+    ClientLeaveParty(Player, Party.code)
+  end
+
+  if args[1] == "kick" then
+    ClientKickParty(args[2], Party.code)
+  end
+
+  if args[1] == "newcode" then
+    local old_code = Party.code
+    ClientNewCode(Party.code)
   end
 
 end, false)

@@ -151,3 +151,22 @@ AddEventHandler('v-rep:server:newCode', function(code)
         end
     end
 end)
+
+RegisterNetEvent('v-rep:server:kickParty')
+AddEventHandler('v-rep:server:kickParty', function(targetcid, code)
+    for i, party in ipairs(Parties) do
+        if party.code == code then
+            for i, member in ipairs(party.members) do
+                if member.cid == targetcid then
+                    table.remove(party.members, i)
+                    InitParty(member)
+                    break
+                end
+            end
+            for i, member in ipairs(party.members) do
+                TriggerClientEvent('v-rep:client:updateParty', member.cid, party)
+            end
+            break
+        end
+    end
+end)
