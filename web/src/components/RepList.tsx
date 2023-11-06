@@ -8,11 +8,11 @@ import { useNuiEvent } from "../hooks/useNuiEvent";
 
 export interface RepItem {
   id: string;
-  xp: {0: number; 1: number;};
+  xp: { 0: number; 1: number };
   lvl: number;
 }
 
-export type RepData = RepItem[]
+export type RepData = RepItem[];
 
 export const RepList: React.FC = () => {
   const [repData, setRepData] = useState<RepData>([]);
@@ -37,7 +37,7 @@ export const RepList: React.FC = () => {
               data: fakereps,
             },
           ]);
-          const fakeitem: RepItem = { id: "Boosting", lvl: 3, xp: [10, 100]  }
+          const fakeitem: RepItem = { id: "Boosting", lvl: 3, xp: [10, 100] };
           debugData([
             {
               action: "updateRepItem",
@@ -72,7 +72,7 @@ export const RepList: React.FC = () => {
   };
 
   useNuiEvent<RepItem>("updateRepItem", (newItem) => {
-    updateRepData(newItem)
+    updateRepData(newItem);
   });
 
   return (
