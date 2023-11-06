@@ -47,14 +47,11 @@ function InitParty(player)
         members = { player }
     }
     print("adding party to table: " .. party.code)
-    print("leader: " .. party.leader)
-    print("cid: " .. party.members[1].cid)
+    print("     leader: " .. party.leader)
+    print("     cid: " .. party.members[1].cid)
+    print("     player: [" .. party.members[1].citizenid .. "]" .. party.members[1].name)
     table.insert(Parties, party)
     TriggerClientEvent('v-rep:client:updateParty', player.cid, party)
-    print("party list: ")
-    for i, party in ipairs(Parties) do 
-        print("party: " .. party.code)
-    end
     return party
 end
 
@@ -115,12 +112,13 @@ QBCore.Functions.CreateCallback('v-rep:joinParty', function(_, cb, player, code)
         print(party.code .. " entered: " .. tostring(code))
         if party.code == tostring(code) then
             matched = true
-            print("code match")
+            print("join code match")
             local count = 0
             for i, member in ipairs(party.members) do
                 count = count + 1
             end
             if count >= 4 then
+                print("party full")
                 cb("full")
                 return
             end

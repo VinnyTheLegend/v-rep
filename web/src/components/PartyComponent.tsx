@@ -61,9 +61,13 @@ export const PartyComponent: React.FC = () => {
   }
 
   function leaveRequest() {
+    if (playerInfo?.citizenid === partyData?.leader && partyData?.members.length === 1) {
+      newCodeRequest()
+      return
+    }
     fetchNui<any>("nuiLeaveRequest")
       .then((retData) => {
-        console.log("keave request sent");
+        console.log("leave request sent");
       })
       .catch((e) => {
         console.log("leave request fail");
