@@ -27,6 +27,7 @@ function InitPlayer()
     citizenid = PlayerData.citizenid
   }
   print("client init data cid: " .. player.cid)
+  --SendReactMessage('partyInitPlayer', player.cid)
   Player = player
   return player
 end
@@ -38,7 +39,8 @@ function ClientUpdateParty(party)
     print(" member: " .. member.name)
   end
   Party = party
-  -- send party to NUI
+  local update = {self = Player, party = Party}
+  SendReactMessage('updateParty', update)
 end
 
 RegisterNetEvent('v-rep:client:updateParty', function(party)
@@ -62,13 +64,29 @@ function ClientLeaveParty(player, code)
   TriggerServerEvent('v-rep:server:leaveParty', player, code)
 end
 
+RegisterNUICallback('nuiLeaveRequest', function(_, cb)
+  ClientLeaveParty(Player, Party.code)
+  cb({})
+end)
+
 function ClientNewCode(code)
   TriggerServerEvent('v-rep:server:newCode', code)
 end
 
+RegisterNUICallback('nuiNewCodeRequest', function(_, cb)
+  ClientNewCode(Party.code)
+  cb({})
+end)
+
 function ClientKickParty(targetcid, code)
   TriggerServerEvent('v-rep:server:kickParty', targetcid, code)
 end
+
+RegisterNUICallback('nuiKickRequest', function(data, cb)
+  ClientKickParty(data, Party.code)
+  cb({})
+end)
+
 
 function ClientJoinPartyRequest(code)
   if code == Party.code then
@@ -88,6 +106,12 @@ function ClientJoinPartyRequest(code)
   print("Joined Party")
 end
 
+RegisterNUICallback('nuiJoinRequest', function(data, cb)
+  ClientJoinPartyRequest(data)
+  cb({})
+end)
+
+
 function PartyMain()
   InitPlayer()
   ClientCheckParty(Player)
@@ -101,8 +125,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
   SendReactMessage('initRepData', FakeData())
 end)
 
---PartyMain()
-
+PartyMain()
 
 RegisterCommand('v-party', function(source, args)
   local src = source
