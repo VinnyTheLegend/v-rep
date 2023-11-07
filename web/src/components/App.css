@@ -239,6 +239,7 @@ pre {
 }
 
 .rep-item-name {
+  min-width: 15rem;
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;
@@ -246,14 +247,12 @@ pre {
   align-items: center;
   justify-content: center;
   overflow: auto;
-  flex: 1 1 auto;
-  max-width: 25%;
+
 }
 
 .rep-item-name>span {
   color: rgb(120, 120, 248);
   font-weight: bold;
-  width: auto;
 }
 
 .rep-item-name>span:nth-child(4) {
@@ -270,9 +269,7 @@ pre {
   background-color: #375a7a;
   border-radius: 10px;
   padding: 3px;
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 50%;
+  flex: 1 5 auto;
 }
 
 .rep-item-bar {
