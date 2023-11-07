@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
 import { fetchNui } from "../utils/fetchNui";
 
+import { PartyMemberComponent } from "./PartyMemberComponent";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // import your icons
 import {
   faRightFromBracket,
-  faCrown,
-  faUserXmark,
   faArrowsRotate,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -126,31 +126,15 @@ export const PartyComponent: React.FC = () => {
         {partyData &&
           partyData.members.map((member) => {
             return (
-              <div className="party-member">
-                <div className="filler"></div>
-                <span className="party-member-name">{member.name}</span>
-                <div className="filler"></div>
-                {partyData.leader === member.citizenid ? (
-                  <button className="party-leader">
-                    <FontAwesomeIcon
-                      icon={faCrown}
-                      style={{ color: "#b49e0e" }}
-                    />
-                  </button>
-                ) : (
-                  playerInfo?.citizenid === partyData.leader && (
-                    <button
-                      className="btn btn-kick btn-danger"
-                      onClick={() => kickRequest(member.cid)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faUserXmark}
-                        style={{ color: "#6060b8" }}
-                      />
-                    </button>
-                  )
-                )}
-              </div>
+              <PartyMemberComponent
+                key={member.citizenid}
+                membercitizenid={member.citizenid}
+                playercitizenid={playerInfo?.citizenid}
+                membercid={member.cid}
+                name={member.name}
+                leader={partyData.leader}
+                kickRequest={kickRequest}
+              />
             );
           })}
       </div>

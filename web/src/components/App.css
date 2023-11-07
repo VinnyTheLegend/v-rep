@@ -100,7 +100,7 @@ pre {
   margin: 0;
   font-weight: bolder;
   font-size: 2rem;
-  line-height: 2rem;
+  line-height: 80%;
   height: 97%;
   padding-bottom: 3%;
 }

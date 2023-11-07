@@ -12,6 +12,44 @@ export interface RepItem {
   lvl: number;
 }
 
+function fakeData() {
+  const fakereps: RepData = [
+    { id: "Bank Robbery", lvl: 5, xp: [50, 100] },
+    { id: "House Robbery", lvl: 2, xp: [25, 100] },
+  ];
+  const fakeitem: RepItem = { id: "Boosting", lvl: 3, xp: [10, 100] };
+  debugData<any>([
+    {
+      action: "initRepData",
+      data: fakereps,
+    },
+    {
+      action: "updateRepItem",
+      data: fakeitem,
+    },
+  ]);
+  let fakepartyupdate = {
+    self: {name: "Vinny", cid: 1, citizenid: "asdbcvc"},
+    party: {code: "xaTsAw", leader: "asdbcvc", members: [{name: "Vinny", cid: 1, citizenid: "asdbcvc"}]}
+  }
+  debugData([
+    {
+      action: "updateParty",
+      data: fakepartyupdate,
+    },
+  ]);
+  fakepartyupdate = {
+    self: {name: "Vinny", cid: 1, citizenid: "asdbcvc"},
+    party: {code: "xaTsAw", leader: "asdbcvc", members: [{name: "Vinny", cid: 1, citizenid: "asdbcvc"}, {name: "Spencer", cid: 2, citizenid: "askdekek"}]}
+  }
+  debugData([
+    {
+      action: "updateParty",
+      data: fakepartyupdate,
+    },
+  ], 5000);
+}
+
 export type RepData = RepItem[];
 
 export const RepList: React.FC = () => {
@@ -27,23 +65,7 @@ export const RepList: React.FC = () => {
         })
         .catch((e) => {
           console.error("Setting mock data due to error", e);
-          const fakereps: RepData = [
-            { id: "Bank Robbery", lvl: 5, xp: [50, 100] },
-            { id: "House Robbery", lvl: 2, xp: [25, 100] },
-          ];
-          debugData([
-            {
-              action: "initRepData",
-              data: fakereps,
-            },
-          ]);
-          const fakeitem: RepItem = { id: "Boosting", lvl: 3, xp: [10, 100] };
-          debugData([
-            {
-              action: "updateRepItem",
-              data: fakeitem,
-            },
-          ]);
+          fakeData()
         });
     }
 
