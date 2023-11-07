@@ -11,9 +11,9 @@ export const RepItemComponent: React.FC<RepItem> = ({ id, lvl, xp }) => {
   return (
     <li key={id} className="rep-item">
       <div className="rep-item-name">
-        <div className="filler"></div>
         <span>{id}</span>
-        <div className="filler"></div>
+      </div>
+      <div className="lvl">
         <span>LVL: {lvl}</span>
       </div>
       <div className="rep-item-bar-container">

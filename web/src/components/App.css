@@ -210,7 +210,6 @@ pre {
 
 .filler {
   flex-grow: 1;
-  height: 100%;
 }
 
 /* rep list */
@@ -256,7 +255,7 @@ pre {
 }
 
 .rep-item-name {
-  min-width: 15rem;
+  max-width: 25%;
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;
@@ -264,7 +263,7 @@ pre {
   align-items: center;
   justify-content: center;
   overflow: auto;
-
+  flex: 1 1 auto;
 }
 
 .rep-item-name>span {
@@ -272,12 +271,12 @@ pre {
   font-weight: bold;
 }
 
-.rep-item-name>span:nth-child(4) {
-  width: 30%;
+.lvl {
+  width: fit-content;
   white-space: nowrap;
   color: rgb(17, 180, 126);
-  font-weight: bold; 
-  justify-self: flex-end;
+  font-weight: bold;
+  padding-right: 3px;
 }
 
 .rep-item-bar-container {
