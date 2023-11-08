@@ -255,7 +255,7 @@ pre {
 }
 
 .rep-item-name {
-  max-width: 25%;
+  max-width: 12rem;
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;
@@ -280,7 +280,7 @@ pre {
 }
 
 .rep-item-bar-container {
-  max-width: 75%;
+  min-width: 5rem;
   height: 1.2rem;
   background-color: #375a7a;
   border-radius: 10px;
