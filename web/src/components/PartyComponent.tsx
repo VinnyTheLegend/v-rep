@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
 import { fetchNui } from "../utils/fetchNui";
 
-import { ParentProps } from "./App"
-
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 import { PartyMemberComponent } from "./PartyMemberComponent";
@@ -33,7 +31,11 @@ interface PartyUpdate {
   party: PartyData;
 }
 
-export const PartyComponent: React.FC<ParentProps> = ({triggerPartyNoti}) => {
+interface NotiProps {
+  triggerPartyNoti: Function
+}
+
+export const PartyComponent: React.FC<NotiProps> = ({triggerPartyNoti}) => {
   const [partyData, setPartyData] = useState<PartyData>();
   const [playerInfo, setPlayerInfo] = useState<PartyMember>();
   const [joinInput, setJoinInput] = useState<string>("");

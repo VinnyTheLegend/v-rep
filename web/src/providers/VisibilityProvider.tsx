@@ -5,7 +5,9 @@ import { isEnvBrowser } from "../utils/misc";
 
 import App from '../components/App';
 
-import { Notifications, PartyNotiState } from "../components/Notifications";
+import { PartyNotifications, PartyNotiState } from "../components/PartyNotifications";
+import { RepNotifications, RepNotiState } from "../components/RepNotifications";
+
 
 const VisibilityCtx = createContext<VisibilityProviderValue | null>(null)
 
@@ -27,11 +29,27 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     message: "none",
   });
 
+  const [repNoti, setRepNoti] = useState<RepNotiState>({
+    isin: false,
+    name: "none",
+    lvl: 0,
+    xp: [50,100]
+  });
+
   function triggerPartyNoti(newname: string, newmessage: string) {
     setTimeout(() => {
       setPartyNoti({ isin: true, name: newname, message: newmessage });
       setTimeout(() => {
         setPartyNoti({ isin: false, name: newname, message: newmessage });
+      }, 3000);
+    }, 3000);
+  }
+
+  function triggerRepNoti(newname: string, newlvl: number, newxp: number[]) {
+    setTimeout(() => {
+      setRepNoti({ isin: true, name: newname, lvl: newlvl, xp: newxp});
+      setTimeout(() => {
+        setRepNoti({ isin: false, name: newname, lvl: newlvl, xp: newxp});
       }, 3000);
     }, 3000);
   }
@@ -58,7 +76,8 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   return (
     <>
-      <Notifications isin={partyNoti.isin} name={partyNoti.name} message={partyNoti.message}/>
+      <PartyNotifications isin={partyNoti.isin} name={partyNoti.name} message={partyNoti.message}/>
+      <RepNotifications isin={repNoti.isin} name={repNoti.name} lvl={repNoti.lvl} xp={repNoti.xp}/>
       <VisibilityCtx.Provider
         value={{
           visible,
@@ -66,7 +85,7 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }}
       >
       <div style={{ visibility: visible ? 'visible' : 'hidden', height: '100%'}}>
-        <App triggerPartyNoti={triggerPartyNoti}/>
+        <App triggerPartyNoti={triggerPartyNoti} triggerRepNoti={triggerRepNoti}/>
       </div>
     </VisibilityCtx.Provider>
   </>

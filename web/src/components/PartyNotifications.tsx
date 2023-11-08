@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { CSSTransition } from "react-transition-group";
 
 export interface PartyNotiState {
     isin: boolean;
@@ -9,12 +9,12 @@ export interface PartyNotiState {
   }
 
 
-export const Notifications: React.FC<PartyNotiState> = ({isin, name, message}) => {
+export const PartyNotifications: React.FC<PartyNotiState> = ({isin, name, message}) => {
 
   return (
     <CSSTransition
       timeout={3000}
-      classNames="party-noti-anim"
+      classNames="noti-anim"
       in={isin}
     >
       <div className="party-noti">

@@ -156,16 +156,12 @@ function fakeData() {
 
 export type RepData = RepItem[];
 
-interface NotiData {
-  width: string;
-  name: string;
-  lvl: number;
-  state: "in" | "out"
+interface NotiProps {
+  triggerRepNoti: Function
 }
 
-export const RepList: React.FC = () => {
+export const RepList: React.FC<NotiProps> = ({triggerRepNoti}) => {
   const [repData, setRepData] = useState<RepData>([]);
-  const [notiData, setNotiData] = useState<NotiData>();
 
   useEffect(() => {
     async function fetchData() {
@@ -188,24 +184,12 @@ export const RepList: React.FC = () => {
     setRepData(newRepData);
   });
 
-  function triggerRepNoti( new_item: RepItem, old_item: RepItem | void) {
-    old_item ? 
-    setNotiData({width: `${(old_item.xp[0]/old_item.xp[1]) * 100}%`, name: old_item.id, lvl: old_item.lvl, state: "out"}) :
-    setNotiData({width: "0%", name: new_item.id, lvl: new_item.lvl, state: "out"})
-    setTimeout(() => {
-      setNotiData({width: `${(new_item.xp[0]/new_item.xp[1]) * 100}%`, name: new_item.id, lvl: new_item.lvl, state: "in"})
-    }, 1000);
-    setTimeout(() => {
-      setNotiData({width: `${(new_item.xp[0]/new_item.xp[1]) * 100}%`, name: new_item.id, lvl: new_item.lvl, state: "out"})
-    }, 5000);
-  }
-
   const updateRepData = (newItem: RepItem) => {
     setRepData((currentData) => {
       let updated = false;
       let newData = currentData.map((item) => {
         if (item.id === newItem.id) {
-          triggerRepNoti(newItem, item)
+          triggerRepNoti(newItem.id, newItem.lvl, newItem.xp)
           updated = true;
           return newItem;
         }
@@ -223,7 +207,6 @@ export const RepList: React.FC = () => {
   });
 
   return (
-    <>
       <ul className="rep-list">
         {repData &&
           repData.map((item) => {
@@ -237,28 +220,5 @@ export const RepList: React.FC = () => {
             );
           })}
       </ul>
-      {notiData && (notiData.state === "in" ?
-      (<div className="rep-noti" style={{transform: "translateY(0)"}}>
-        <div>  
-          <div>
-            <span>{notiData.name} LVL: {notiData.lvl}</span>
-          </div>
-          <div className="noti-bar-container">
-            <div className="noti-bar" style={{width: notiData.width}}></div>
-          </div>
-        </div>
-      </div>) :
-      (<div className="rep-noti" style={{transform: "translateY(100%)"}}>
-      <div>  
-        <div>
-          <span>{notiData.name} LVL: {notiData.lvl}</span>
-        </div>
-        <div className="noti-bar-container">
-          <div className="noti-bar" style={{width: notiData.width}}></div>
-        </div>
-      </div>
-    </div>))
-      }
-    </>
   );
 };

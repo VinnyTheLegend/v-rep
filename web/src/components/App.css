@@ -399,20 +399,20 @@ pre {
   color: rgb(120, 120, 248);
 }
 
-.party-noti-anim-enter {
+.noti-anim-enter {
   transform: translateY(100%);
 }
 
-.party-noti-anim-enter-active {
+.noti-anim-enter-active {
   transition: transform 1s ease;
   transform: translateY(0)
 }
 
-.party-noti-anim-exit {
+.noti-anim-exit {
   transition: transform 1s ease;
 }
 
-.party-noti-anim-exit-active {
+.noti-anim-exit-active {
   transition: transform 1s ease;
   transform: translateY(100%)
 }
