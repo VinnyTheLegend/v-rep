@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
 import { fetchNui } from "../utils/fetchNui";
 
-import {
-  TransitionGroup,
-  CSSTransition
-} from 'react-transition-group';
+import { ParentProps } from "./App"
+
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 import { PartyMemberComponent } from "./PartyMemberComponent";
 
@@ -34,7 +33,7 @@ interface PartyUpdate {
   party: PartyData;
 }
 
-export const PartyComponent: React.FC = () => {
+export const PartyComponent: React.FC<ParentProps> = ({triggerPartyNoti}) => {
   const [partyData, setPartyData] = useState<PartyData>();
   const [playerInfo, setPlayerInfo] = useState<PartyMember>();
   const [joinInput, setJoinInput] = useState<string>("");
@@ -66,9 +65,12 @@ export const PartyComponent: React.FC = () => {
   }
 
   function leaveRequest() {
-    if (playerInfo?.citizenid === partyData?.leader && partyData?.members.length === 1) {
-      newCodeRequest()
-      return
+    if (
+      playerInfo?.citizenid === partyData?.leader &&
+      partyData?.members.length === 1
+    ) {
+      newCodeRequest();
+      return;
     }
     fetchNui<any>("nuiLeaveRequest")
       .then((retData) => {
@@ -90,48 +92,66 @@ export const PartyComponent: React.FC = () => {
   }
 
   return (
-    <div className="top-info">
-      <div className="code-container">
-        <form action="" id="join-party-form" onSubmit={(e) => {e.preventDefault(); joinRequest()}}>
-          <input
-            type="text"
-            id="code-input"
-            name="code-input"
-            value={joinInput}
-            onChange={(e) => setJoinInput(e.target.value)}
-          ></input>
-          <button
-            id="code-submit"
-            className="btn"
-            type="button"
-            onClick={joinRequest}
+    <>
+      <div className="top-info">
+        <div className="code-container">
+          <form
+            action=""
+            id="join-party-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              joinRequest();
+            }}
           >
-            Join
-          </button>
-        </form>
-        <div className="code-inner">
-          <div id="party-code">{partyData?.code || "no code"}</div>
-          {partyData?.leader === playerInfo?.citizenid && (
-            <div className="btn-code-refresh btn" onClick={newCodeRequest}>
-              <FontAwesomeIcon
-                icon={faArrowsRotate}
-                style={{ color: "#6060b8" }}
-              />
-            </div>
-          )}
+            <input
+              type="text"
+              id="code-input"
+              name="code-input"
+              value={joinInput}
+              onChange={(e) => setJoinInput(e.target.value)}
+            ></input>
+            <button
+              id="code-submit"
+              className="btn"
+              type="button"
+              onClick={joinRequest}
+            >
+              Join
+            </button>
+          </form>
+          <div className="code-inner">
+            <div id="party-code">{partyData?.code || "no code"}</div>
+            {partyData?.leader === playerInfo?.citizenid && (
+              <div className="btn-code-refresh btn" onClick={newCodeRequest}>
+                <FontAwesomeIcon
+                  icon={faArrowsRotate}
+                  style={{ color: "#6060b8" }}
+                />
+              </div>
+            )}
+          </div>
+          <div className="btn-leave btn btn-danger" onClick={leaveRequest}>
+            <FontAwesomeIcon
+              icon={faRightFromBracket}
+              style={{ color: "#6060b8" }}
+            />
+          </div>
         </div>
-        <div className="btn-leave btn btn-danger" onClick={leaveRequest}>
-          <FontAwesomeIcon
-            icon={faRightFromBracket}
-            style={{ color: "#6060b8" }}
-          />
-        </div>
-      </div>
-      <TransitionGroup component="div" className="party-container">
+        <TransitionGroup component="div" className="party-container">
           {partyData &&
             partyData.members.map((member) => {
               return (
-                <CSSTransition key={member.citizenid} timeout={{exit: 500}} classNames="party-anim">
+                <CSSTransition
+                  key={member.citizenid}
+                  timeout={{ exit: 500 }}
+                  classNames="party-anim"
+                  onEnter={() => {
+                    triggerPartyNoti(member.name, "Joined Party")
+                  }}
+                  onExit={() => {
+                    triggerPartyNoti(member.name, "Left Party")
+                  }}
+                >
                   <PartyMemberComponent
                     membercitizenid={member.citizenid}
                     playercitizenid={playerInfo?.citizenid}
@@ -143,7 +163,9 @@ export const PartyComponent: React.FC = () => {
                 </CSSTransition>
               );
             })}
-      </TransitionGroup>
-    </div>
+        </TransitionGroup>
+      </div>
+
+    </>
   );
 };

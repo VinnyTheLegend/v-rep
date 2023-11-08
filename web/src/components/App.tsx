@@ -16,12 +16,16 @@ debugData([
   },
 ]);
 
-const App: React.FC = () => {
+export interface ParentProps {
+  triggerPartyNoti: Function
+}
+
+const App: React.FC<ParentProps> = ({triggerPartyNoti}) => {
 
   return (
     <div className="nui-wrapper">
       <div className="main-container">
-          <PartyComponent />
+          <PartyComponent triggerPartyNoti={triggerPartyNoti}/>
         <div className="rep-list-container">
           <RepList />
         </div>
