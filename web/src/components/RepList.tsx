@@ -150,7 +150,7 @@ function fakeData() {
         data: fakepartyupdate,
       },
     ],
-    25000
+    20500
   );
 }
 

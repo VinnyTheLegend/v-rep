@@ -37,20 +37,20 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   });
 
   function triggerPartyNoti(newname: string, newmessage: string) {
+    setPartyNoti({ isin: true, name: newname, message: newmessage });
     setTimeout(() => {
-      setPartyNoti({ isin: true, name: newname, message: newmessage });
-      setTimeout(() => {
-        setPartyNoti({ isin: false, name: newname, message: newmessage });
-      }, 3000);
+      setPartyNoti((currentData) => {
+        return { ...currentData, isin: false };
+      });
     }, 3000);
   }
 
   function triggerRepNoti(newname: string, newlvl: number, newxp: number[]) {
+    setRepNoti({ isin: true, name: newname, lvl: newlvl, xp: newxp});
     setTimeout(() => {
-      setRepNoti({ isin: true, name: newname, lvl: newlvl, xp: newxp});
-      setTimeout(() => {
-        setRepNoti({ isin: false, name: newname, lvl: newlvl, xp: newxp});
-      }, 3000);
+      setRepNoti((currentData) => {
+        return { ...currentData, isin: false };
+      })
     }, 3000);
   }
 
