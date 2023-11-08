@@ -53,7 +53,7 @@ function fakeData() {
       ],
     },
   };
-  debugData(
+  debugData<any>(
     [
       {
         action: "updateParty",
@@ -146,7 +146,6 @@ export const RepList: React.FC = () => {
   });
 
   function triggerRepNoti( new_item: RepItem, old_item: RepItem | void) {
-    console.log(`${(old_item.xp[0]/old_item.xp[1]) * 100}%`)
     old_item ? 
     setNotiData({width: `${(old_item.xp[0]/old_item.xp[1]) * 100}%`, name: old_item.id, lvl: old_item.lvl, state: "out"}) :
     setNotiData({width: "0%", name: new_item.id, lvl: new_item.lvl, state: "out"})
