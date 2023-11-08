@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
 import { fetchNui } from "../utils/fetchNui";
 
+import {
+  TransitionGroup,
+  CSSTransition
+} from 'react-transition-group';
+
 import { PartyMemberComponent } from "./PartyMemberComponent";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -122,22 +127,24 @@ export const PartyComponent: React.FC = () => {
           />
         </div>
       </div>
-      <div className="party-container">
-        {partyData &&
-          partyData.members.map((member) => {
-            return (
-              <PartyMemberComponent
-                key={member.citizenid}
-                membercitizenid={member.citizenid}
-                playercitizenid={playerInfo?.citizenid}
-                membercid={member.cid}
-                name={member.name}
-                leader={partyData.leader}
-                kickRequest={kickRequest}
-              />
-            );
-          })}
-      </div>
+      <TransitionGroup component="div" className="party-container">
+          {partyData &&
+            partyData.members.map((member) => {
+              return (
+                <CSSTransition key={member.citizenid} timeout={500} classNames="party-anim">
+                  <PartyMemberComponent
+                    membercitizenid={member.citizenid}
+                    playercitizenid={playerInfo?.citizenid}
+                    membercid={member.cid}
+                    name={member.name}
+                    leader={partyData.leader}
+                    kickRequest={kickRequest}
+                    key={member.citizenid}
+                  />
+                </CSSTransition>
+              );
+            })}
+      </TransitionGroup>
     </div>
   );
 };

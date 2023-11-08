@@ -168,6 +168,11 @@ pre {
   justify-content: center;
 }
 
+.party-anim-exit-active {
+  flex-grow: 0;
+  transition: flex-grow 0.5s;
+}
+
 @keyframes member-grow {
   0%   {flex-grow: 0}
 

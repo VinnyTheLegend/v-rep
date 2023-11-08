@@ -109,6 +109,27 @@ function fakeData() {
     ],
     15000
   );
+  fakepartyupdate = {
+    self: { name: "Vinny", cid: 1, citizenid: "asdbcvc" },
+    party: {
+      code: "xaTsAw",
+      leader: "asdbcvc",
+      members: [
+        { name: "Vinny", cid: 1, citizenid: "asdbcvc" },
+        { name: "Spencer", cid: 2, citizenid: "askdekek" },
+        { name: "Nimmy", cid: 4, citizenid: "cvsjujds" },
+      ],
+    },
+  };
+  debugData(
+    [
+      {
+        action: "updateParty",
+        data: fakepartyupdate,
+      },
+    ],
+    20000
+  );
 }
 
 export type RepData = RepItem[];
