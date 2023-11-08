@@ -61,7 +61,7 @@ function fakeData() {
       },
       {
         action: "updateRepItem",
-        data: { id: "House Robbery", lvl: 2, xp: [90, 100] },
+        data: { id: "House Robbery", lvl: 3, xp: [90, 100] },
       },
     ],
     5000
@@ -152,6 +152,15 @@ function fakeData() {
     ],
     20500
   );
+  debugData<any>(
+    [
+      {
+        action: "updateRepItem",
+        data: { id: "House Robbery", lvl: 4, xp: [15, 100] },
+      },
+    ],
+    21000
+  )
 }
 
 export type RepData = RepItem[];
@@ -189,7 +198,6 @@ export const RepList: React.FC<NotiProps> = ({triggerRepNoti}) => {
       let updated = false;
       let newData = currentData.map((item) => {
         if (item.id === newItem.id) {
-          triggerRepNoti(newItem.id, newItem.lvl, newItem.xp)
           updated = true;
           return newItem;
         }
@@ -200,6 +208,7 @@ export const RepList: React.FC<NotiProps> = ({triggerRepNoti}) => {
       }
       return [...newData, newItem];
     });
+    triggerRepNoti(newItem.id, newItem.lvl, newItem.xp)
   };
 
   useNuiEvent<RepItem>("updateRepItem", (newItem) => {
