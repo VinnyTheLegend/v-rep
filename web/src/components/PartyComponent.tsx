@@ -131,7 +131,7 @@ export const PartyComponent: React.FC = () => {
           {partyData &&
             partyData.members.map((member) => {
               return (
-                <CSSTransition key={member.citizenid} timeout={500} classNames="party-anim">
+                <CSSTransition key={member.citizenid} timeout={{exit: 500}} classNames="party-anim">
                   <PartyMemberComponent
                     membercitizenid={member.citizenid}
                     playercitizenid={playerInfo?.citizenid}

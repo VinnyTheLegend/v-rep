@@ -151,8 +151,19 @@ pre {
   justify-content: center;
   overflow: hidden;
   width: 0;
-  animation-name: member-grow;
-  animation-duration: 0.5s;
+  transition: flex-grow 0.5s;
+}
+
+.party-anim-enter {
+  flex-grow: 0;
+}
+
+.party-anime-enter-active {
+  flex-grow: 1;
+}
+
+.party-anim-exit-active {
+  flex-grow: 0;
 }
 
 .party-member {
@@ -168,10 +179,6 @@ pre {
   justify-content: center;
 }
 
-.party-anim-exit-active {
-  flex-grow: 0;
-  transition: flex-grow 0.5s;
-}
 
 @keyframes member-grow {
   0%   {flex-grow: 0}
