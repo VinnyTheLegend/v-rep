@@ -295,3 +295,49 @@ pre {
   transition-duration: 0.4s;
   transition-property: width;
 }
+
+.rep-noti {
+  width: 100vw;
+  height: 5vw;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  transition: transform 1s ease;
+  transform: translateY(100%)
+}
+
+.rep-noti>div {
+  width: 75%;
+  background: #282c34;
+  display: flex;
+  height: 50%;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.rep-noti>div>div {
+  min-width: fit-content;
+  color: rgb(17, 180, 126);
+  font-weight: bold;
+}
+
+.noti-bar-container {
+  height: 1.2rem;
+  background-color: #375a7a;
+  border-radius: 10px;
+  padding: 3px;
+  flex: 1 1 auto;
+}
+
+.noti-bar {
+  background-color: rgb(13, 153, 106);
+  height: 100%;
+  border-radius: 10px;
+  transition-duration: 1s;
+  transition-delay: 1s;
+  transition-property: width;
+}
