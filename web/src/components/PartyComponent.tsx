@@ -139,7 +139,6 @@ export const PartyComponent: React.FC = () => {
                     name={member.name}
                     leader={partyData.leader}
                     kickRequest={kickRequest}
-                    key={member.citizenid}
                   />
                 </CSSTransition>
               );
