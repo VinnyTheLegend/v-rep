@@ -8,7 +8,7 @@ import { useNuiEvent } from "../hooks/useNuiEvent";
 
 export interface RepItem {
   id: string;
-  xp: { 0: number; 1: number };
+  xp: [number, number];
   lvl: number;
 }
 
@@ -194,10 +194,14 @@ export const RepList: React.FC<NotiProps> = ({triggerRepNoti}) => {
   });
 
   const updateRepData = (newItem: RepItem) => {
+    let oldlvl = 0
+    let oldxp = [0, 100]
     setRepData((currentData) => {
       let updated = false;
       let newData = currentData.map((item) => {
         if (item.id === newItem.id) {
+          oldlvl = item.lvl;
+          oldxp = item.xp;
           updated = true;
           return newItem;
         }
@@ -208,7 +212,7 @@ export const RepList: React.FC<NotiProps> = ({triggerRepNoti}) => {
       }
       return [...newData, newItem];
     });
-    triggerRepNoti(newItem.id, newItem.lvl, newItem.xp)
+    triggerRepNoti(newItem.id, newItem.lvl, newItem.xp, oldlvl, oldxp)
   };
 
   useNuiEvent<RepItem>("updateRepItem", (newItem) => {
