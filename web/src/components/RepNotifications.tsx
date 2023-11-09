@@ -6,7 +6,7 @@ export interface RepNotiState {
   isin: boolean;
   name: string;
   lvl: number;
-  xp: { 0: number; 1: number };
+  xp: [number, number];
 }
 
 export const RepNotifications: React.FC<RepNotiState> = ({
