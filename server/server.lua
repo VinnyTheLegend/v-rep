@@ -117,7 +117,7 @@ QBCore.Functions.CreateCallback('v-rep:joinParty', function(_, cb, player, code)
             for i, member in ipairs(party.members) do
                 count = count + 1
             end
-            if count >= 4 then
+            if count >= Config.party_max then
                 print("party full")
                 cb("full")
                 return
