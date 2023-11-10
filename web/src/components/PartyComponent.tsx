@@ -50,6 +50,14 @@ export const PartyComponent: React.FC<NotiProps> = ({triggerPartyNoti}) => {
     fetchNui<any>("nuiJoinRequest", joinInput)
       .then((retData) => {
         console.log("join request sent");
+        switch(retData) {
+          case "full":
+            triggerPartyNoti("Join Failed", "Party Full")
+          case "no party":
+            triggerPartyNoti("Join Failed", "Wrong Code")
+          case "member":
+            triggerPartyNoti("Join Failed", "Already Member")
+        }
       })
       .catch((e) => {
         console.log("join request fail");

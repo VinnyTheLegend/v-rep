@@ -101,14 +101,14 @@ function ClientJoinPartyRequest(code)
   local joinresult = Citizen.Await(p)
   if joinresult == "full" or joinresult == "member" or joinresult == "noparty" then
     print("Failed to join party: " .. joinresult)
-    return
+    return joinresult
   end
   print("Joined Party")
+  return "joined"
 end
 
 RegisterNUICallback('nuiJoinRequest', function(data, cb)
-  ClientJoinPartyRequest(data)
-  cb({})
+  cb({ClientJoinPartyRequest(data)})
 end)
 
 
