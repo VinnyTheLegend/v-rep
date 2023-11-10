@@ -198,11 +198,3 @@ RegisterNUICallback('hideFrame', function(_, cb)
   debugPrint('Hide NUI frame')
   cb({})
 end)
-
-RegisterNUICallback('getRepData', function(data, cb)
-  debugPrint('Data sent by React', json.encode(data))
-
-  local curCoords = GetEntityCoords(PlayerPedId())
-  local retData <const> = { x = curCoords.x, y = curCoords.y, z = curCoords.z }
-  cb(FakeData())
-end)
