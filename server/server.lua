@@ -88,6 +88,11 @@ RegisterNetEvent('v-rep:server:leaveParty')
 AddEventHandler('v-rep:server:leaveParty', function(player, code)
     for i, party in ipairs(Parties) do
         if party.code == code then
+            if #party.members == 1 then 
+                table.remove(Parties, i)
+                InitParty(player)
+                return
+            end
             for i, member in ipairs(party.members) do
                 if member.cid == player.cid then
                     table.remove(party.members, i)
