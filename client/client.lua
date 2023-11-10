@@ -125,7 +125,9 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
   SendReactMessage('initRepData', FakeData())
 end)
 
-PartyMain()
+if QBCore.Functions.GetPlayerData().charinfo then
+  PartyMain()
+end
 
 RegisterCommand('v-party', function(source, args)
   local src = source
@@ -182,10 +184,11 @@ RegisterCommand('v-rep', function(source, args)
   end
 
   if args[1] == "update" then
+    local max_xp = math.random(1,1000)
     SendReactMessage("updateRepItem", {
       id = args[2],
       lvl = math.random(1, 10),
-      xp = math.random(1, 100) .. "%"
+      xp = {math.random(1, max_xp), max_xp}
     })
   end
 end, false)
