@@ -113,19 +113,60 @@ end)
 
 
 function PartyMain()
+  print("Init NUI PARTY Data")
   InitPlayer()
   ClientCheckParty(Player)
+end
+
+function InitRepData(src)
+  print("Init NUI REP Data")
+  local RepData = {}
+  for skill, skilldata in pairs(Config.Skills) do
+    print(skill)
+    local p = promise.new()
+    QBCore.Functions.TriggerCallback('v-rep:GetPlayerExp', function(result)
+      p:resolve(result)
+    end, skill)
+    local xp = Citizen.Await(p)
+    local lvl = skilldata.LevelFormula(xp)
+    print("lvl: " .. lvl)
+    print("xp: " .. xp .. "/" .. skilldata.LevelUpFormula(lvl))
+    if lvl > 1 or xp > 0 then
+      table.insert(RepData,
+      {
+        id = skilldata.DisplayName,
+        lvl = lvl,
+        xp = {xp, skilldata.LevelUpFormula(lvl)}
+      })
+    end
+    Wait(100)
+  end
+  if RepData then SendReactMessage("initRepData", RepData) end
+end
+
+RegisterNetEvent('v-rep:client:updateRep', function(skill, xp)
+  local lvl = Config.Skills[skill].LevelFormula(xp)
+
+  SendReactMessage("updateRepItem", {
+    id = Config.Skills[skill].DisplayName,
+    lvl = lvl,
+    xp = {xp, Config.Skills[skill].LevelUpFormula(lvl)}
+  })
+end)
+
+function RepMain(src)
+  InitRepData(src)
 end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
   Wait(5000)
   local src = source
   PartyMain()
-  print("Init NUI Rep Data")
-  SendReactMessage('initRepData', FakeData())
+  RepMain(src)
 end)
 
 if QBCore.Functions.GetPlayerData().charinfo then
+  RepMain(QBCore.Functions.GetPlayerData().source)
   PartyMain()
 end
 
@@ -178,20 +219,18 @@ RegisterCommand('v-party', function(source, args)
 end, false)
 
 RegisterCommand('v-rep', function(source, args)
+  local src = source
   if args[1] == "show" then
     toggleNuiFrame(true)
     debugPrint('Show NUI frame')
   end
 
   if args[1] == "update" then
-    local max_xp = math.random(1,1000)
-    SendReactMessage("updateRepItem", {
-      id = args[2],
-      lvl = math.random(1, 10),
-      xp = {math.random(1, max_xp), max_xp}
-    })
+    TriggerServerEvent('v-rep:server:AddPlayerExp', args[2], tonumber(args[3]))
   end
 end, false)
+
+
 
 RegisterNUICallback('hideFrame', function(_, cb)
   toggleNuiFrame(false)

@@ -174,3 +174,65 @@ AddEventHandler('v-rep:server:kickParty', function(targetcid, code)
         end
     end
 end)
+
+function AddPlayerExp(source, skill, exp)
+	local Player = QBCore.Functions.GetPlayer(source)
+	local curExp = Player.PlayerData.metadata[skill] or 0
+
+	Player.Functions.SetMetaData(skill, math.max(0, exp + curExp))
+	Player.Functions.Save()
+	TriggerClientEvent('v-rep:client:updateRep', source, skill, exp + curExp)
+end
+
+RegisterNetEvent('v-rep:server:AddPlayerExp')
+AddEventHandler('v-rep:server:AddPlayerExp', function(skill, exp)
+    local src = source
+    AddPlayerExp(src, skill, exp)
+end)
+exports('AddPlayerExp', AddPlayerExp)
+
+function SetPlayerExp(source, skill, exp)
+    local Player = QBCore.Functions.GetPlayer(source)
+
+	Player.Functions.SetMetaData(skill, math.max(0, exp))
+	Player.Functions.Save()
+	TriggerClientEvent('v-rep:client:updateRep', source, skill, exp)
+end
+
+RegisterNetEvent('v-rep:server:SetPlayerExp')
+AddEventHandler('v-rep:server:SetPlayerExp', function(skill, exp) 
+    local src = source
+    SetPlayerExp(src, skill, exp)
+end)
+exports('SetPlayerExp', SetPlayerExp)
+
+function GetPlayerLevel(source, skill)
+	if Config.Skills[skill] == nil then return false end
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	local exp = Player.PlayerData.metadata[skill] or 0
+
+	local level = Config.Skills[skill].LevelFormula(exp)
+	return level <= Config.Skills[skill].MaxLevel and level or Config.Skills[skill].MaxLevel
+end
+
+exports('GetPlayerLevel', GetPlayerLevel)
+
+QBCore.Functions.CreateCallback('v-rep:GetPlayerLevel', function(source, cb, skill)
+    local src = source
+    cb(GetPlayerLevel(src, skill))
+end)
+
+function GetPlayerExp(source, skill)
+	if Config.Skills[skill] == nil then return false end
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	return Player.PlayerData.metadata[skill] or 0
+end
+
+exports('GetPlayerExp', GetPlayerExp)
+
+QBCore.Functions.CreateCallback('v-rep:GetPlayerExp', function(source, cb, skill)
+    local src = source
+    cb(GetPlayerExp(src, skill))
+end)
