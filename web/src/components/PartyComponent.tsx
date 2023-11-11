@@ -53,10 +53,13 @@ export const PartyComponent: React.FC<NotiProps> = ({triggerPartyNoti}) => {
         switch(retData) {
           case "full":
             triggerPartyNoti("Join Failed", "Party Full")
+            break;
           case "no party":
             triggerPartyNoti("Join Failed", "Wrong Code")
+            break;
           case "member":
             triggerPartyNoti("Join Failed", "Already Member")
+            break;
         }
       })
       .catch((e) => {
