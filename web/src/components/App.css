@@ -304,8 +304,7 @@ pre {
   background-color: rgb(13, 153, 106);
   height: 100%;
   border-radius: 10px;
-  transition-duration: 0.4s;
-  transition-property: width;
+  transition: width 1s ease-out;
 }
 
 .rep-noti {
@@ -349,9 +348,7 @@ pre {
   background-color: rgb(13, 153, 106);
   height: 100%;
   border-radius: 10px;
-  transition-duration: 1s;
-  transition-delay: 1s;
-  transition-property: width;
+  transition: width 1s ease-out 1s;
 }
 
 .party-noti {
