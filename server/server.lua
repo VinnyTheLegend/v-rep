@@ -185,10 +185,7 @@ function AddPlayerExp(source, skill, exp)
 end
 
 RegisterNetEvent('v-rep:server:AddPlayerExp')
-AddEventHandler('v-rep:server:AddPlayerExp', function(skill, exp)
-    local src = source
-    AddPlayerExp(src, skill, exp)
-end)
+AddEventHandler('v-rep:server:AddPlayerExp', AddPlayerExp)
 exports('AddPlayerExp', AddPlayerExp)
 
 function SetPlayerExp(source, skill, exp)
@@ -200,10 +197,7 @@ function SetPlayerExp(source, skill, exp)
 end
 
 RegisterNetEvent('v-rep:server:SetPlayerExp')
-AddEventHandler('v-rep:server:SetPlayerExp', function(skill, exp) 
-    local src = source
-    SetPlayerExp(src, skill, exp)
-end)
+AddEventHandler('v-rep:server:SetPlayerExp', SetPlayerExp)
 exports('SetPlayerExp', SetPlayerExp)
 
 function GetPlayerLevel(source, skill)
@@ -216,12 +210,10 @@ function GetPlayerLevel(source, skill)
 	return level <= Config.Skills[skill].MaxLevel and level or Config.Skills[skill].MaxLevel
 end
 
-exports('GetPlayerLevel', GetPlayerLevel)
-
-QBCore.Functions.CreateCallback('v-rep:GetPlayerLevel', function(source, cb, skill)
-    local src = source
+QBCore.Functions.CreateCallback('v-rep:GetPlayerLevel', function(source, cb, src, skill)
     cb(GetPlayerLevel(src, skill))
 end)
+exports('GetPlayerLevel', GetPlayerLevel)
 
 function GetPlayerExp(source, skill)
 	if Config.Skills[skill] == nil then return false end
@@ -232,7 +224,6 @@ end
 
 exports('GetPlayerExp', GetPlayerExp)
 
-QBCore.Functions.CreateCallback('v-rep:GetPlayerExp', function(source, cb, skill)
-    local src = source
+QBCore.Functions.CreateCallback('v-rep:GetPlayerExp', function(source, cb, src, skill)
     cb(GetPlayerExp(src, skill))
 end)

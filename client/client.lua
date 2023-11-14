@@ -119,14 +119,14 @@ function PartyMain()
 end
 
 function InitRepData(src)
-  print("Init NUI REP Data")
+  print("Init NUI REP Data " .. src)
   local RepData = {}
   for skill, skilldata in pairs(Config.Skills) do
     print(skill)
     local p = promise.new()
     QBCore.Functions.TriggerCallback('v-rep:GetPlayerExp', function(result)
       p:resolve(result)
-    end, skill)
+    end, src, skill)
     local xp = Citizen.Await(p)
     local lvl = skilldata.LevelFormula(xp)
     print("lvl: " .. lvl)
@@ -136,7 +136,10 @@ function InitRepData(src)
       {
         id = skilldata.DisplayName,
         lvl = lvl,
-        xp = {xp, skilldata.LevelUpFormula(lvl)}
+        xp = {
+          xp - skilldata.LevelUpFormula(lvl-1), 
+          skilldata.LevelUpFormula(lvl) - skilldata.LevelUpFormula(lvl-1)
+        }
       })
     end
     Wait(100)
@@ -144,13 +147,40 @@ function InitRepData(src)
   if RepData then SendReactMessage("initRepData", RepData) end
 end
 
+exports('AddPlayerExp', function(src, skill, exp)
+  TriggerServerEvent('v-rep:server:AddPlayerExp', src, skill, exp)
+end)
+
+exports('SetPlayerExp', function(src, skill, exp)
+  TriggerServerEvent('v-rep:server:SetPlayerExp', src, skill, exp)
+end)
+
+exports('GetPlayerLevel', function(src, skill)
+  local p = promise.new()
+  QBCore.Functions.TriggerCallback('v-rep:GetPlayerLevel', function(result)
+    p:resolve(result)
+  end, src, skill)
+  return Citizen.Await(p)
+end)
+
+exports('GetPlayerExp', function(src, skill)
+  local p = promise.new()
+  QBCore.Functions.TriggerCallback('v-rep:GetPlayerExp', function(result)
+    p:resolve(result)
+  end, src, skill)
+  return Citizen.Await(p)
+end)
+
 RegisterNetEvent('v-rep:client:updateRep', function(skill, xp)
   local lvl = Config.Skills[skill].LevelFormula(xp)
 
   SendReactMessage("updateRepItem", {
     id = Config.Skills[skill].DisplayName,
     lvl = lvl,
-    xp = {xp, Config.Skills[skill].LevelUpFormula(lvl)}
+    xp = {
+      xp - Config.Skills[skill].LevelUpFormula(lvl-1),
+      Config.Skills[skill].LevelUpFormula(lvl) - Config.Skills[skill].LevelUpFormula(lvl-1)
+    }
   })
 end)
 
@@ -160,9 +190,8 @@ end
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
   Wait(5000)
-  local src = source
   PartyMain()
-  RepMain(src)
+  RepMain(QBCore.Functions.GetPlayerData().source)
 end)
 
 if QBCore.Functions.GetPlayerData().charinfo then
@@ -219,14 +248,34 @@ RegisterCommand('v-party', function(source, args)
 end, false)
 
 RegisterCommand('v-rep', function(source, args)
-  local src = source
+  local src = QBCore.Functions.GetPlayerData().source
   if args[1] == "show" then
     toggleNuiFrame(true)
     debugPrint('Show NUI frame')
   end
 
   if args[1] == "update" then
-    TriggerServerEvent('v-rep:server:AddPlayerExp', args[2], tonumber(args[3]))
+    --TriggerServerEvent('v-rep:server:AddPlayerExp', src, args[2], tonumber(args[3]))
+    exports['v-rep']:AddPlayerExp(src, args[2], tonumber(args[3]))
+  end
+
+  if args[1] == "set" then
+    exports['v-rep']:SetPlayerExp(src, args[2], tonumber(args[3]))
+  end
+
+  if args[1] == "getexp" then
+    print(exports['v-rep']:GetPlayerExp(src, args[2]))
+  end
+
+  if args[1] == "getlevel" then
+    print(exports['v-rep']:GetPlayerLevel(src, args[2]))
+  end
+
+  if args[1] == "get" then
+    local xp = exports['v-rep']:GetPlayerExp(src, args[2])
+    local lvl = exports['v-rep']:GetPlayerLevel(src, args[2])
+    print(lvl)
+    print(xp .. "/" .. Config.Skills[args[2]].LevelUpFormula(lvl))
   end
 end, false)
 

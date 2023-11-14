@@ -1,20 +1,20 @@
 function ExponentialExp(exp)
-    local baseXP = 100
-    local currentLevel = 1
+    local xpcount = 0
+    local currentLevel = 0
 
-    while exp >= baseXP do
-        exp = exp - baseXP
-        baseXP = baseXP * 2
+    while xpcount <= exp do
         currentLevel = currentLevel + 1
+        xpcount = currentLevel^2*100
+    end
+    if currentLevel == 0 then
+        currentLevel = 1
     end
 
     return currentLevel
 end
 
 function LevelMaxExp(level)
-    local baseXP = 100
-    local maxXP = baseXP * (2^level - 1)
-    return maxXP
+    return level^2*100
 end
 
 Config = {
