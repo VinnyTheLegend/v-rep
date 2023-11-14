@@ -171,6 +171,14 @@ exports('GetPlayerExp', function(src, skill)
   return Citizen.Await(p)
 end)
 
+exports('GetPartyFromSrc', function(src)
+  local p = promise.new()
+  QBCore.Functions.TriggerCallback('v-rep:GetPartyFromSrc', function(result)
+    p:resolve(result)
+  end, src)
+  return Citizen.Await(p)
+end)
+
 RegisterNetEvent('v-rep:client:updateRep', function(skill, xp)
   local lvl = Config.Skills[skill].LevelFormula(xp)
 
@@ -200,7 +208,7 @@ if QBCore.Functions.GetPlayerData().charinfo then
 end
 
 RegisterCommand('v-party', function(source, args)
-  local src = source
+  local src = QBCore.Functions.GetPlayerData().source
   if args[1] == "list" then
     TriggerEvent('chat:addMessage', {
       color = { 255, 0, 0},
@@ -243,6 +251,14 @@ RegisterCommand('v-party', function(source, args)
   if args[1] == "newcode" then
     local old_code = Party.code
     ClientNewCode(Party.code)
+  end
+
+  if args[1] == "get" then
+    local party = exports['v-rep']:GetPartyFromSrc(src)
+    print(party.code .. " LEADER:" .. party.leader)
+    for i,member in ipairs(party.members) do
+      print("[" .. member.cid .. "]" .. member.name)
+    end
   end
 
 end, false)

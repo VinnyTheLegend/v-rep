@@ -175,6 +175,21 @@ AddEventHandler('v-rep:server:kickParty', function(targetcid, code)
     end
 end)
 
+function GetPartyFromSrc(src) 
+    for i, party in ipairs(Parties) do
+        for i, member in ipairs(party.members) do
+            if member.cid == src then
+                return party
+            end
+        end
+    end
+end
+
+QBCore.Functions.CreateCallback('v-rep:GetPartyFromSrc', function(source, cb, src)
+    cb(GetPartyFromSrc(src))
+end)
+exports('GetPartyFromSrc', GetPartyFromSrc)
+
 function AddPlayerExp(source, skill, exp)
 	local Player = QBCore.Functions.GetPlayer(source)
 	local curExp = Player.PlayerData.metadata[skill] or 0
