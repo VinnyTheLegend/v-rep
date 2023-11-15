@@ -15,15 +15,14 @@
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@types/react-transition-group": "^4.4.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.2",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "@types/react-transition-group": "^4.4.9",
     "@vitejs/plugin-react": "^2.2.0",
     "typescript": "^4.9.3",
     "vite": "^3.2.4"
